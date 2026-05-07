@@ -3,6 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react';
 
+const getAuthErrorMessage = (err, fallback) => {
+  const data = err.response?.data;
+
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    return data.errors.map((error) => error.msg || error).join('. ');
+  }
+
+  return data?.message || fallback;
+};
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,10 +29,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(getAuthErrorMessage(err, 'Login failed'));
     } finally {
       setIsLoading(false);
     }

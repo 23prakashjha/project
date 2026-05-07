@@ -17,6 +17,7 @@ const Home = () => {
   const fetchStories = async (page = 1) => {
     try {
       setLoading(true);
+      setError('');
       const response = await storiesAPI.getStories(page, 10);
       setStories(response.data.stories);
       setPagination(response.data.pagination);
@@ -28,16 +29,31 @@ const Home = () => {
     }
   };
 
-  const handleScrape = async () => {
+  const refreshStories = async (page = 1, showLoading = false) => {
     try {
+      if (showLoading) {
+        setLoading(true);
+      }
       setScraping(true);
+      setError('');
       await scrapeAPI.scrape();
-      await fetchStories(currentPage);
+      const response = await storiesAPI.getStories(page, 10);
+      setStories(response.data.stories);
+      setPagination(response.data.pagination);
+      setCurrentPage(page);
     } catch (err) {
       setError('Failed to scrape new stories');
+      await fetchStories(page);
     } finally {
       setScraping(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleScrape = () => {
+    refreshStories(1);
   };
 
   const handleBookmark = async (storyId) => {
@@ -68,7 +84,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchStories();
+    refreshStories(1, true);
   }, []);
 
   return (
@@ -106,7 +122,9 @@ const Home = () => {
           </span>
           <div>
             <h2 className="text-base font-black text-slate-950">Story Feed</h2>
-            <p className="text-sm text-slate-500">Page {currentPage}{pagination ? ` of ${pagination.pages}` : ''}</p>
+            <p className="text-sm text-slate-500">
+              {scraping ? 'Fetching fresh Hacker News stories...' : `Page ${currentPage}${pagination ? ` of ${pagination.pages}` : ''}`}
+            </p>
           </div>
         </div>
         <button

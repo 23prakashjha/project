@@ -3,6 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, Lock, Mail, User, UserPlus } from 'lucide-react';
 
+const getAuthErrorMessage = (err, fallback) => {
+  const data = err.response?.data;
+
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    return data.errors.map((error) => error.msg || error).join('. ');
+  }
+
+  return data?.message || fallback;
+};
+
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +29,14 @@ const Register = () => {
     e.preventDefault();
     setError('');
 
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(trimmedUsername)) {
+      setError('Username must be 3-30 characters and can only contain letters, numbers, and underscores');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -27,10 +45,10 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await register(username, email, password);
+      await register(trimmedUsername, trimmedEmail, password);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(getAuthErrorMessage(err, 'Registration failed'));
     } finally {
       setIsLoading(false);
     }
@@ -82,8 +100,12 @@ const Register = () => {
                 placeholder="Choose a username"
                 required
                 minLength={3}
+                maxLength={30}
+                pattern="[A-Za-z0-9_]+"
+                title="Use 3-30 letters, numbers, or underscores only"
               />
             </div>
+            <p className="mt-2 text-xs font-semibold text-slate-500">Use 3-30 letters, numbers, or underscores.</p>
           </div>
 
           <div>

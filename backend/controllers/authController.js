@@ -3,18 +3,29 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { validationResult } = require('express-validator');
 
+const formatValidationErrors = (errors) => errors.array().map((error) => error.msg);
+
 const register = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      const details = formatValidationErrors(errors);
+      return res.status(400).json({
+        message: details[0] || 'Please check your registration details',
+        errors: details
+      });
     }
 
-    const { username, email, password } = req.body;
+    const username = req.body.username.trim();
+    const email = req.body.email.trim().toLowerCase();
+    const { password } = req.body;
 
     let user = await User.findOne({ $or: [{ email }, { username }] });
     if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+      const field = user.email === email ? 'email' : 'username';
+      return res.status(400).json({
+        message: `An account with this ${field} already exists`
+      });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -58,10 +69,15 @@ const login = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      const details = formatValidationErrors(errors);
+      return res.status(400).json({
+        message: details[0] || 'Please check your login details',
+        errors: details
+      });
     }
 
-    const { email, password } = req.body;
+    const email = req.body.email.trim().toLowerCase();
+    const { password } = req.body;
 
     let user = await User.findOne({ email });
     if (!user) {
