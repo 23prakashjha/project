@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.hn-header {
+  background: rgba(255, 255, 255, 0.78);
+  color: #0f172a;
+  backdrop-filter: blur(18px);
+}
+
+.hn-link {
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.hn-link:hover {
+  text-decoration: underline;
+}
+
+.hn-meta {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.bookmark-btn {
+  transition: all 0.2s ease;
+}
+
+.bookmark-btn:hover {
+  transform: scale(1.1);
+}
+
+.bookmark-btn.bookmarked {
+  color: #f97316;
+}
+
+::selection {
+  background: #fed7aa;
+  color: #7c2d12;
+}
