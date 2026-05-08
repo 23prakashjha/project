@@ -7,6 +7,7 @@
     "dev": "react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "bulid": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
