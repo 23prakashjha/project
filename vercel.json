@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "projectSettings": {
+    "framework": "services"
+  },
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "create-react-app"
+    },
+    "backend": {
+      "entrypoint": "backend/server.js",
+      "routePrefix": "/_/backend",
+      "framework": "express"
+    }
+  }
+}

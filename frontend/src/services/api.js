@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://project-vfdz.onrender.com/api';
+const getDefaultApiUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:5000/api';
+  }
+
+  return '/_/backend/api';
+};
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || getDefaultApiUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,

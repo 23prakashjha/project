@@ -26,15 +26,26 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/api/auth', authRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/scrape', scrapeRoutes);
+app.use('/_/backend/api/auth', authRoutes);
+app.use('/_/backend/api/stories', storyRoutes);
+app.use('/_/backend/api/scrape', scrapeRoutes);
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
-  
-  try {
-    console.log('Running initial scrape on server start...');
-    await scrapeHackerNews();
-  } catch (error) {
-    console.error('Initial scrape failed:', error);
-  }
-});
+if (require.main === module) {
+  app.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
+
+    try {
+      console.log('Running initial scrape on server start...');
+      await scrapeHackerNews();
+    } catch (error) {
+      console.error('Initial scrape failed:', error);
+    }
+  });
+}
+
+module.exports = app;
